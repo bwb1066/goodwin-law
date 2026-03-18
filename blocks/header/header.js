@@ -26,14 +26,19 @@ function closeOnFocusLost(e) {
   const nav = e.currentTarget;
   if (!nav.contains(e.relatedTarget)) {
     const navSections = nav.querySelector('.nav-sections');
-    if (!navSections) return;
-    const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
-    if (navSectionExpanded && isDesktop.matches) {
-      // eslint-disable-next-line no-use-before-define
-      toggleAllNavSections(navSections, false);
-    } else if (!isDesktop.matches) {
-      // eslint-disable-next-line no-use-before-define
-      toggleMenu(nav, navSections, false);
+    const navSecondary = nav.querySelector('.nav-secondary');
+    if (navSections) {
+      const navSectionExpanded = navSections.querySelector('[aria-expanded="true"]');
+      if (navSectionExpanded && isDesktop.matches) {
+        // eslint-disable-next-line no-use-before-define
+        toggleAllNavSections(navSections, false);
+      } else if (!isDesktop.matches) {
+        // eslint-disable-next-line no-use-before-define
+        toggleMenu(nav, navSections, false);
+      }
+    }
+    if (navSecondary && isDesktop.matches) {
+      navSecondary.querySelectorAll('.nav-drop').forEach((s) => s.setAttribute('aria-expanded', 'false'));
     }
   }
 }
@@ -124,27 +129,103 @@ export default async function decorate(block) {
   nav.id = 'nav';
   while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
-  const classes = ['brand', 'sections', 'tools'];
+  const classes = ['brand', 'sections', 'secondary', 'tools'];
   classes.forEach((c, i) => {
     const section = nav.children[i];
     if (section) section.classList.add(`nav-${c}`);
   });
 
   const navBrand = nav.querySelector('.nav-brand');
-  const brandLink = navBrand.querySelector('.button');
+  const brandLink = navBrand && navBrand.querySelector('.button');
   if (brandLink) {
     brandLink.className = '';
     brandLink.closest('.button-container').className = '';
   }
 
+  const ARROW_SVG = `<svg class="nav-arrow" viewBox="0 0 18 10" fill="inherit" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M7.575 8.657 0 1.082 1.082 0l7.575 7.575L16.232 0l1.083 1.082-7.576 7.575L8.658 9.74 7.575 8.657Z"/>
+  </svg>`;
+
   const navSections = nav.querySelector('.nav-sections');
   if (navSections) {
     navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
-      if (navSection.querySelector('ul')) navSection.classList.add('nav-drop');
-      navSection.addEventListener('click', () => {
+      if (navSection.querySelector('ul')) {
+        navSection.classList.add('nav-drop');
+        const link = navSection.querySelector(':scope > a');
+        if (link) {
+          const label = document.createElement('span');
+          label.className = 'nav-label';
+          link.replaceWith(label);
+          label.append(link);
+          label.insertAdjacentHTML('beforeend', ARROW_SVG);
+        }
+      }
+      navSection.addEventListener('mouseenter', () => {
         if (isDesktop.matches) {
+          toggleAllNavSections(navSections);
+          navSection.setAttribute('aria-expanded', 'true');
+        }
+      });
+      navSection.addEventListener('mouseleave', () => {
+        if (isDesktop.matches) navSection.setAttribute('aria-expanded', 'false');
+      });
+      navSection.addEventListener('click', () => {
+        if (!isDesktop.matches) {
           const expanded = navSection.getAttribute('aria-expanded') === 'true';
           toggleAllNavSections(navSections);
+          navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+        }
+      });
+    });
+  }
+
+  // inline search SVG for CSS fill control
+  const navTools = nav.querySelector('.nav-tools');
+  if (navTools) {
+    const iconImg = navTools.querySelector('.icon-search img');
+    if (iconImg) {
+      fetch(iconImg.src)
+        .then((r) => r.text())
+        .then((svgText) => {
+          const span = iconImg.closest('.icon-search');
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
+          const svg = svgDoc.querySelector('svg');
+          if (svg) {
+            svg.setAttribute('aria-hidden', 'true');
+            span.replaceChildren(svg);
+          }
+        });
+    }
+  }
+
+  const navSecondary = nav.querySelector('.nav-secondary');
+  if (navSecondary) {
+    navSecondary.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((navSection) => {
+      if (navSection.querySelector('ul')) {
+        navSection.classList.add('nav-drop');
+        const link = navSection.querySelector(':scope > a');
+        if (link) {
+          const label = document.createElement('span');
+          label.className = 'nav-label';
+          link.replaceWith(label);
+          label.append(link);
+          label.insertAdjacentHTML('beforeend', ARROW_SVG);
+        }
+      }
+      navSection.addEventListener('mouseenter', () => {
+        if (isDesktop.matches) {
+          navSecondary.querySelectorAll('.nav-drop').forEach((s) => s.setAttribute('aria-expanded', 'false'));
+          navSection.setAttribute('aria-expanded', 'true');
+        }
+      });
+      navSection.addEventListener('mouseleave', () => {
+        if (isDesktop.matches) navSection.setAttribute('aria-expanded', 'false');
+      });
+      navSection.addEventListener('click', () => {
+        if (!isDesktop.matches) {
+          const expanded = navSection.getAttribute('aria-expanded') === 'true';
+          navSecondary.querySelectorAll('.nav-drop').forEach((s) => s.setAttribute('aria-expanded', 'false'));
           navSection.setAttribute('aria-expanded', expanded ? 'false' : 'true');
         }
       });

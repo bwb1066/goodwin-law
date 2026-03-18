@@ -1,0 +1,140 @@
+.search-hero {
+  width: 100%;
+  font-family: proxima-nova, sans-serif;
+}
+
+/* ── input row ── */
+.search-hero-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--link-color);
+  border-radius: 0;
+  padding: 0 8px 0 16px;
+  gap: 8px;
+  height: 60px;
+}
+
+.search-hero-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: #aaa;
+}
+
+.search-hero-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.search-hero-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: proxima-nova, sans-serif;
+  font-size: 17px;
+  font-weight: 300;
+  color: #2d3539;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-hero-input::placeholder {
+  color: #aaa;
+  font-weight: 300;
+}
+
+.search-hero-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #f7941d;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.search-hero-submit:hover {
+  background: #e07d0a;
+}
+
+.search-hero-submit svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ── suggestions panel ── */
+.search-hero-suggestions {
+  margin: 0;
+  padding: 1.5em 0;
+  background: #fff;
+  box-shadow: 0 0 20px rgba(247, 148, 29, 0.3);
+  border-radius: 0;
+}
+
+.search-hero-recent-header {
+  margin: 4px 20px 2px;
+  font-family: proxima-nova, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #aaa;
+}
+
+.search-hero-suggestions ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.search-hero-suggestion {
+  border-bottom: 1px solid #ececec;
+  padding: 0;
+  margin: 0;
+}
+
+.search-hero-suggestion:last-child {
+  border-bottom: none;
+}
+
+.search-hero-suggestion a:any-link {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px;
+  font-family: proxima-nova, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: #2d3539;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.search-hero-suggestion a:hover {
+  color: #f7941d;
+}
+
+.search-hero-sugg-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  fill: #aaa;
+  stroke: #aaa;
+  transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+.search-hero-suggestion a:hover .search-hero-sugg-icon {
+  fill: #f7941d;
+  stroke: #f7941d;
+}

@@ -4,6 +4,7 @@ import {
   loadFooter,
   decorateIcons,
   decorateSections,
+  decorateBlock,
   decorateBlocks,
   decorateTemplateAndTheme,
   waitForFirstImage,
@@ -41,6 +42,192 @@ async function loadFonts() {
   } catch (e) {
     // do nothing
   }
+}
+
+/**
+ * Builds the two-column hero layout from the first section,
+ * splitting content at the "Insights & Resources" heading.
+ * Runs after decorateSections and decorateBlocks, so operates on the
+ * post-decoration DOM structure.
+ * Handles both:
+ *   - New structure: div.top-section > div > [leftCol, rightCol]
+ *   - Old structure: flat content split at an h2 containing "Insights"
+ * @param {Element} main
+ */
+
+/**
+ * Converts block tables (first cell = block name) to block divs.
+ * Needed when blocks are nested inside section containers that the backend
+ * doesn't pre-convert.
+ * @param {Element} container
+ */
+function convertBlockTables(container) {
+  container.querySelectorAll('table').forEach((table) => {
+    const firstCell = table.querySelector('td, th');
+    if (!firstCell) return;
+    const blockName = firstCell.textContent.trim().toLowerCase().replace(/[^0-9a-z]/g, '-');
+    if (!blockName) return;
+    const block = document.createElement('div');
+    block.className = blockName;
+    [...table.querySelectorAll('tr')].slice(1).forEach((row) => {
+      const rowDiv = document.createElement('div');
+      [...row.querySelectorAll('td, th')].forEach((cell) => {
+        const cellDiv = document.createElement('div');
+        // move child nodes (preserves pictures, links, etc.)
+        [...cell.childNodes].forEach((n) => cellDiv.append(n));
+        rowDiv.append(cellDiv);
+      });
+      block.append(rowDiv);
+    });
+    table.replaceWith(block);
+  });
+}
+
+function buildHeroLayout(main) {
+  const section = main.querySelector(':scope > div.section');
+  if (!section) return;
+
+  // ── Path A: new two-column structure inside div.top-section ──
+  const topSectionEl = section.querySelector('.top-section');
+  if (topSectionEl) {
+    // Convert any block tables that the backend left unconverted
+    convertBlockTables(topSectionEl);
+
+    // Expect: div.top-section > div > [leftCol, rightCol]
+    const container = topSectionEl.querySelector(':scope > div');
+    if (!container) return;
+    const cols = [...container.querySelectorAll(':scope > div')];
+    if (cols.length < 2) return;
+    const [leftCol, rightCol] = cols;
+
+    const searchHero = leftCol.querySelector('.search-hero');
+    if (!searchHero) return;
+
+    // Build card – move all left column children into cardInner
+    const cardInner = document.createElement('div');
+    cardInner.className = 'hero-card-inner';
+    [...leftCol.children].forEach((c) => cardInner.append(c));
+
+    // Orange rule after the first heading
+    const orangeRule = document.createElement('div');
+    orangeRule.className = 'hero-orange-rule';
+    const headingEl = cardInner.querySelector('h1, h2');
+    if (headingEl) headingEl.after(orangeRule);
+    else cardInner.prepend(orangeRule);
+
+    // Ensure search-hero is decorated so loadSection picks it up
+    decorateBlock(searchHero);
+
+    const heroCard = document.createElement('div');
+    heroCard.className = 'hero-card';
+    heroCard.append(cardInner);
+
+    const heroLeft = document.createElement('div');
+    heroLeft.className = 'hero-left';
+    heroLeft.append(heroCard);
+
+    // Right column – move all right column children
+    const heroRight = document.createElement('div');
+    heroRight.className = 'hero-right';
+    [...rightCol.children].forEach((c) => heroRight.append(c));
+
+    const heroLayout = document.createElement('div');
+    heroLayout.className = 'hero-layout';
+    heroLayout.append(heroLeft, heroRight);
+
+    // Remove the now-empty top-section container chain first,
+    // then prepend heroLayout so it appears before platform/commitment sections
+    topSectionEl.closest('div:not(.section)')?.remove();
+    [...section.children].forEach((child) => {
+      if (!child.hasChildNodes()) child.remove();
+    });
+    section.prepend(heroLayout);
+    return;
+  }
+
+  // ── Path B: flat content split at the Insights h2 (legacy structure) ──
+  const searchHero = section.querySelector('.search-hero');
+  if (!searchHero) return;
+
+  const insightsH2 = [...section.querySelectorAll('h2')].find(
+    (el) => el.textContent.includes('Insights'),
+  );
+  if (!insightsH2) return;
+
+  const sectionChildren = [...section.children];
+  const insightsContainer = sectionChildren.find(
+    (child) => child === insightsH2 || child.contains(insightsH2),
+  );
+  const insightsContainerIdx = sectionChildren.indexOf(insightsContainer);
+
+  const leftWrappers = sectionChildren.slice(0, insightsContainerIdx);
+  const insightsContainerKids = [...insightsContainer.children];
+  const h2IdxInContainer = insightsContainerKids.indexOf(insightsH2);
+  const leftExtraChildren = insightsContainerKids.slice(0, h2IdxInContainer);
+  const rightFromContainer = insightsContainerKids.slice(h2IdxInContainer);
+  const rightWrappers = sectionChildren.slice(insightsContainerIdx + 1);
+
+  const cardInner = document.createElement('div');
+  cardInner.className = 'hero-card-inner';
+
+  const searchHeroWrapper = searchHero.parentElement;
+  leftWrappers.forEach((wrapper) => {
+    if (wrapper === searchHeroWrapper) return;
+    if (wrapper.classList.contains('default-content-wrapper')) {
+      [...wrapper.children].forEach((c) => cardInner.append(c));
+    } else {
+      cardInner.append(wrapper);
+    }
+  });
+  leftExtraChildren.forEach((c) => cardInner.append(c));
+  cardInner.append(searchHeroWrapper);
+
+  const orangeRule = document.createElement('div');
+  orangeRule.className = 'hero-orange-rule';
+  const h1El = cardInner.querySelector('h1');
+  if (h1El) h1El.after(orangeRule);
+  else cardInner.prepend(orangeRule);
+
+  const heroCard = document.createElement('div');
+  heroCard.className = 'hero-card';
+  heroCard.append(cardInner);
+
+  const heroLeft = document.createElement('div');
+  heroLeft.className = 'hero-left';
+  heroLeft.append(heroCard);
+
+  const heroRight = document.createElement('div');
+  heroRight.className = 'hero-right';
+  rightFromContainer.forEach((c) => heroRight.append(c));
+  rightWrappers.forEach((w) => heroRight.append(w));
+
+  const heroLayout = document.createElement('div');
+  heroLayout.className = 'hero-layout';
+  heroLayout.append(heroLeft, heroRight);
+
+  section.append(heroLayout);
+
+  [...section.children].forEach((child) => {
+    if (child !== heroLayout && !child.hasChildNodes()) child.remove();
+  });
+}
+
+/**
+ * Reorders named section containers within the first section to a canonical order.
+ * @param {Element} main
+ */
+function reorderSections(main) {
+  const section = main.querySelector(':scope > div.section');
+  if (!section) return;
+  const order = ['hero-layout', 'platform-section', 'commitment-section'];
+  // Prepend in reverse order so first item ends up first
+  [...order].reverse().forEach((name) => {
+    // Find the direct child of section that has or contains the named element
+    const target = [...section.children].find(
+      (child) => child.classList.contains(name) || child.querySelector(`.${name}`),
+    );
+    if (target) section.prepend(target);
+  });
 }
 
 /**
@@ -123,6 +310,8 @@ export function decorateMain(main) {
   buildAutoBlocks(main);
   decorateSections(main);
   decorateBlocks(main);
+  buildHeroLayout(main);
+  reorderSections(main);
   decorateButtons(main);
 }
 
@@ -130,9 +319,24 @@ export function decorateMain(main) {
  * Loads everything needed to get to LCP.
  * @param {Element} doc The container element
  */
+function addVideoBackground() {
+  const video = document.createElement('video');
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.id = 'page-video-bg';
+  const source = document.createElement('source');
+  source.src = '/assets/video-background.mp4';
+  source.type = 'video/mp4';
+  video.append(source);
+  document.body.prepend(video);
+}
+
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
   decorateTemplateAndTheme();
+  addVideoBackground();
   const main = doc.querySelector('main');
   if (main) {
     decorateMain(main);
