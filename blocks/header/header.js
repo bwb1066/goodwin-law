@@ -1,5 +1,4 @@
 import { getMetadata } from '../../scripts/aem.js';
-import { loadFragment } from '../fragment/fragment.js';
 
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
@@ -118,28 +117,38 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // load nav as fragment
+  // load nav HTML directly to avoid decorateSections side-effects
   const navMeta = getMetadata('nav');
   const navPath = navMeta ? new URL(navMeta, window.location).pathname : '/nav';
-  const fragment = await loadFragment(navPath);
+  const resp = await fetch(`${navPath}.plain.html`);
+  if (!resp.ok) return;
+
+  const tmp = document.createElement('div');
+  tmp.innerHTML = await resp.text();
 
   // decorate nav DOM
   block.textContent = '';
   const nav = document.createElement('nav');
   nav.id = 'nav';
-  while (fragment.firstElementChild) nav.append(fragment.firstElementChild);
 
   const classes = ['brand', 'sections', 'secondary', 'tools'];
-  classes.forEach((c, i) => {
-    const section = nav.children[i];
-    if (section) section.classList.add(`nav-${c}`);
+  [...tmp.children].forEach((rawSection, i) => {
+    if (!classes[i]) return;
+    const section = document.createElement('div');
+    section.classList.add(`nav-${classes[i]}`);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'default-content-wrapper';
+    while (rawSection.firstChild) wrapper.append(rawSection.firstChild);
+    section.append(wrapper);
+    nav.append(section);
   });
 
   const navBrand = nav.querySelector('.nav-brand');
   const brandLink = navBrand && navBrand.querySelector('.button');
   if (brandLink) {
     brandLink.className = '';
-    brandLink.closest('.button-container').className = '';
+    const buttonContainer = brandLink.closest('.button-container');
+    if (buttonContainer) buttonContainer.className = '';
   }
 
   const ARROW_SVG = `<svg class="nav-arrow" viewBox="0 0 18 10" fill="inherit" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
