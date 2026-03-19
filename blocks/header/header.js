@@ -131,17 +131,55 @@ export default async function decorate(block) {
   const nav = document.createElement('nav');
   nav.id = 'nav';
 
-  const classes = ['brand', 'sections', 'secondary', 'tools'];
-  [...tmp.children].forEach((rawSection, i) => {
-    if (!classes[i]) return;
-    const section = document.createElement('div');
-    section.classList.add(`nav-${classes[i]}`);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'default-content-wrapper';
-    while (rawSection.firstChild) wrapper.append(rawSection.firstChild);
-    section.append(wrapper);
-    nav.append(section);
-  });
+  if (tmp.children.length >= 4) {
+    // Boilerplate structure: separate divs for brand / sections / secondary / tools
+    const classes = ['brand', 'sections', 'secondary', 'tools'];
+    [...tmp.children].forEach((rawSection, i) => {
+      if (!classes[i]) return;
+      const section = document.createElement('div');
+      section.classList.add(`nav-${classes[i]}`);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'default-content-wrapper';
+      while (rawSection.firstChild) wrapper.append(rawSection.firstChild);
+      section.append(wrapper);
+      nav.append(section);
+    });
+  } else {
+    // Flat structure: single div containing logo then a ul of all nav items
+    const rawDiv = tmp.children[0];
+    if (!rawDiv) return;
+
+    // Brand — first paragraph containing an image
+    const brandPara = rawDiv.querySelector('p:first-child');
+    if (brandPara && brandPara.querySelector('img')) {
+      const brand = document.createElement('div');
+      brand.className = 'nav-brand';
+      const brandWrapper = document.createElement('div');
+      brandWrapper.className = 'default-content-wrapper';
+      brandWrapper.append(brandPara);
+      brand.append(brandWrapper);
+      nav.append(brand);
+    }
+
+    // Sections — the ul, unwrapping any <p><strong><a> wrappers
+    const ul = rawDiv.querySelector('ul');
+    if (ul) {
+      ul.querySelectorAll(':scope > li').forEach((li) => {
+        const nested = li.querySelector(':scope > p > strong > a, :scope > p > a');
+        if (nested) {
+          li.insertBefore(nested, li.firstChild);
+          li.querySelector(':scope > p')?.remove();
+        }
+      });
+      const sections = document.createElement('div');
+      sections.className = 'nav-sections';
+      const sectionsWrapper = document.createElement('div');
+      sectionsWrapper.className = 'default-content-wrapper';
+      sectionsWrapper.append(ul);
+      sections.append(sectionsWrapper);
+      nav.append(sections);
+    }
+  }
 
   const navBrand = nav.querySelector('.nav-brand');
   const brandLink = navBrand && navBrand.querySelector('.button');
