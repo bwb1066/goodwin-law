@@ -1,0 +1,112 @@
+.platform-section {
+  background-color: #1a2b33;
+  color: #fff;
+  padding: 60px 24px;
+}
+
+.platform-section > div {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  align-items: center;
+}
+
+/* ── text column ── */
+.platform-section .platform-section-text h2 {
+  margin-top: 0;
+  margin-bottom: 24px;
+  font-size: 36px;
+  font-weight: 300;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.platform-section .platform-section-text h2 strong {
+  font-weight: 300;
+}
+
+.platform-section .platform-section-text ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.platform-section .platform-section-text ul li {
+  padding: 10px 0;
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #94cce7;
+  border-bottom: 1px solid rgb(255 255 255 / 12%);
+}
+
+.platform-section .platform-section-text ul li:first-child {
+  border-top: 1px solid rgb(255 255 255 / 12%);
+}
+
+.platform-section .platform-section-text p {
+  margin: 0 0 24px;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: rgb(255 255 255 / 80%);
+}
+
+.platform-section .platform-section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f7941d;
+  text-decoration: none;
+  border-bottom: 1px solid #f7941d;
+  padding-bottom: 2px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.platform-section .platform-section-link:hover {
+  color: #e07d0a;
+  border-color: #e07d0a;
+  text-decoration: none;
+}
+
+/* ── visual column ── */
+.platform-section .platform-section-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (width >= 900px) {
+  .platform-section {
+    padding: 80px 32px;
+  }
+
+  .platform-section > div {
+    flex-direction: row;
+    align-items: center;
+    gap: 80px;
+  }
+
+  .platform-section .platform-section-text {
+    flex: 1 1 auto;
+    max-width: 520px;
+  }
+
+  .platform-section .platform-section-visual {
+    flex-shrink: 0;
+  }
+
+  .platform-section .platform-section-text h2 {
+    font-size: 44px;
+  }
+}

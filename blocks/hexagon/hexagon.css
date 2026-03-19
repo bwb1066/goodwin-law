@@ -1,0 +1,29 @@
+.hexagon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hexagon .hexagon-image-wrapper,
+.hexagon p {
+  margin: 0;
+  width: 320px;
+  height: 320px;
+  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  overflow: hidden;
+}
+
+.hexagon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+@media (width >= 900px) {
+  .hexagon .hexagon-image-wrapper,
+  .hexagon p {
+    width: 420px;
+    height: 420px;
+  }
+}

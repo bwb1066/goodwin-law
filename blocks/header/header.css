@@ -186,6 +186,7 @@ header nav .nav-secondary ul {
 
   header nav[aria-expanded='true'] .nav-sections,
   header nav[aria-expanded='true'] .nav-secondary {
+    display: flex;
     align-self: unset;
   }
 
