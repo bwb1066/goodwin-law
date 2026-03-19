@@ -74,7 +74,7 @@
   /* brand colors */
   --color-orange: #c8590a;
   --color-nav-text: #1a1a1a;
-  --color-nav-secondary: #444444;
+  --color-nav-secondary: #444;
 }
 
 /* fallback fonts */
@@ -355,6 +355,7 @@ main img {
 
 
 /* ── hero layout ── */
+
 /* needs higher specificity than `main > .section > div` (0,1,2) */
 main > .section .hero-layout {
   display: grid;
@@ -373,7 +374,7 @@ main > .section .hero-layout {
   background: #fff;
   padding: 64px 80px 64px 90px;
   margin-left: -55px;
-  border-radius: 20px 0 40px 0;
+  border-radius: 20px 0 40px;
   transform: translateX(-25vw);
   animation:
     hero-slide-in 1.5s cubic-bezier(0.25, 0, 0.1, 1) forwards;
@@ -421,7 +422,7 @@ main > .section .hero-layout {
   font-weight: 400;
   font-size: 24px;
   line-height: 29px;
-  color: rgb(45, 53, 57);
+  color: rgb(45 53 57);
 }
 
 @keyframes hero-slide-in {

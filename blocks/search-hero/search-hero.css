@@ -7,7 +7,7 @@
 .search-hero-input-wrapper {
   display: flex;
   align-items: center;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgb(255 255 255 / 95%);
   backdrop-filter: blur(8px);
   border: 1px solid var(--link-color);
   border-radius: 0;
@@ -77,7 +77,7 @@
   margin: 0;
   padding: 1.5em 0;
   background: #fff;
-  box-shadow: 0 0 20px rgba(247, 148, 29, 0.3);
+  box-shadow: 0 0 20px rgb(247 148 29 / 30%);
   border-radius: 0;
 }
 
@@ -112,7 +112,7 @@
   align-items: center;
   gap: 14px;
   padding: 12px 20px;
-  font-family: proxima-nova, -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: proxima-nova, -apple-system, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
