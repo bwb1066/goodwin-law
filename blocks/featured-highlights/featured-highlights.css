@@ -1,0 +1,144 @@
+.featured-highlights-header {
+  margin-bottom: 24px;
+}
+
+.featured-highlights-header h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 300;
+  color: #2d3539;
+}
+
+/* ── card ── */
+.featured-highlights .featured-highlights-card {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  border: 1.5px solid var(--link-color);
+  border-radius: 6px 0 20px;
+  background: #fff;
+  overflow: visible;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: border-color 0.2s ease;
+}
+
+/* orange offset block — hidden by default */
+.featured-highlights .featured-highlights-card::before {
+  content: '';
+  position: absolute;
+  inset: -8px auto auto -8px;
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  background: #f7941d;
+  border-radius: 6px 0 20px;
+  z-index: -1;
+  opacity: 0;
+  transform: translate(-4px, -4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.featured-highlights .featured-highlights-card:hover {
+  border-color: #f7941d;
+}
+
+.featured-highlights .featured-highlights-card:hover::before {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ── image ── */
+.featured-highlights .featured-highlights-image {
+  flex-shrink: 0;
+  width: 200px;
+  overflow: hidden;
+  border-radius: 4px 0 0 18px;
+}
+
+.featured-highlights .featured-highlights-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ── text ── */
+.featured-highlights .featured-highlights-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 24px;
+  position: relative;
+}
+
+.featured-highlights .featured-highlights-title {
+  display: block;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: #2d3539;
+  text-decoration: none;
+  margin-bottom: 0;
+  transition: color 0.2s ease;
+}
+
+.featured-highlights .featured-highlights-card:hover .featured-highlights-title {
+  color: #2d3539;
+}
+
+/* description — hidden by default, shown on hover */
+.featured-highlights .featured-highlights-text p {
+  margin: 8px 0 0;
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: #444;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.25s ease, opacity 0.25s ease;
+}
+
+.featured-highlights .featured-highlights-card:hover .featured-highlights-text p {
+  max-height: 120px;
+  opacity: 1;
+}
+
+/* ── arrow ── */
+.featured-highlights .featured-highlights-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid #f7941d;
+  color: #f7941d;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.featured-highlights .featured-highlights-arrow svg {
+  width: 16px;
+  height: 16px;
+}
+
+.featured-highlights .featured-highlights-card:hover .featured-highlights-arrow {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (width >= 900px) {
+  .featured-highlights .featured-highlights-image {
+    width: 240px;
+  }
+
+  .featured-highlights .featured-highlights-title {
+    font-size: 18px;
+  }
+}

@@ -255,6 +255,18 @@ function buildAutoBlocks(main) {
     }
 
     buildHeroBlock(main);
+
+    // Auto-block: table with empty first row + h2 sibling → featured-highlights
+    main.querySelectorAll('table').forEach((table) => {
+      const firstCell = table.querySelector('tr:first-child > td');
+      if (!firstCell || firstCell.textContent.trim() !== '' || !firstCell.colSpan) return;
+      const cardRows = [...table.querySelectorAll('tr')].slice(1);
+      if (!cardRows.length) return;
+      const blockData = cardRows.map((row) => [...row.querySelectorAll('td')]);
+      const block = buildBlock('featured-highlights', blockData);
+      table.replaceWith(block);
+      decorateBlock(block);
+    });
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
