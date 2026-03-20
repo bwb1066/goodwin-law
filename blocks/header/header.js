@@ -210,54 +210,37 @@ export default async function decorate(block) {
   const nav = document.createElement('nav');
   nav.id = 'nav';
 
-  if (tmp.children.length >= 4) {
-    // Boilerplate structure: separate divs for brand / sections / secondary / tools
-    const classes = ['brand', 'sections', 'secondary', 'tools'];
-    [...tmp.children].forEach((rawSection, i) => {
-      if (!classes[i]) return;
-      const section = document.createElement('div');
-      section.classList.add(`nav-${classes[i]}`);
-      const wrapper = document.createElement('div');
-      wrapper.className = 'default-content-wrapper';
-      while (rawSection.firstChild) wrapper.append(rawSection.firstChild);
-      section.append(wrapper);
-      nav.append(section);
-    });
-  } else {
-    // Flat structure: single div containing logo then a ul of all nav items
-    const rawDiv = tmp.children[0];
-    if (!rawDiv) return;
+  // Map authored divs to nav areas by position: brand / sections / secondary / tools
+  // Accept any number of divs (1-4); inject a tools section if not authored
+  const classes = ['brand', 'sections', 'secondary', 'tools'];
+  [...tmp.children].forEach((rawSection, i) => {
+    if (!classes[i]) return;
+    const section = document.createElement('div');
+    section.classList.add(`nav-${classes[i]}`);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'default-content-wrapper';
+    while (rawSection.firstChild) wrapper.append(rawSection.firstChild);
+    section.append(wrapper);
+    nav.append(section);
+  });
 
-    // Brand — first paragraph containing an image
-    const brandPara = rawDiv.querySelector('p:first-child');
-    if (brandPara && brandPara.querySelector('img')) {
-      const brand = document.createElement('div');
-      brand.className = 'nav-brand';
-      const brandWrapper = document.createElement('div');
-      brandWrapper.className = 'default-content-wrapper';
-      brandWrapper.append(brandPara);
-      brand.append(brandWrapper);
-      nav.append(brand);
-    }
-
-    // Sections — the ul, unwrapping any <p><strong><a> wrappers
-    const ul = rawDiv.querySelector('ul');
-    if (ul) {
-      ul.querySelectorAll(':scope > li').forEach((li) => {
-        const nested = li.querySelector(':scope > p > strong > a, :scope > p > a');
-        if (nested) {
-          li.insertBefore(nested, li.firstChild);
-          li.querySelector(':scope > p')?.remove();
-        }
-      });
-      const sections = document.createElement('div');
-      sections.className = 'nav-sections';
-      const sectionsWrapper = document.createElement('div');
-      sectionsWrapper.className = 'default-content-wrapper';
-      sectionsWrapper.append(ul);
-      sections.append(sectionsWrapper);
-      nav.append(sections);
-    }
+  // If no tools section was authored, inject one with a search icon
+  if (!nav.querySelector('.nav-tools')) {
+    const tools = document.createElement('div');
+    tools.className = 'nav-tools';
+    const toolsWrapper = document.createElement('div');
+    toolsWrapper.className = 'default-content-wrapper';
+    const p = document.createElement('p');
+    const span = document.createElement('span');
+    span.className = 'icon icon-search';
+    const img = document.createElement('img');
+    img.src = '/icons/search.svg';
+    img.alt = 'Search';
+    span.append(img);
+    p.append(span);
+    toolsWrapper.append(p);
+    tools.append(toolsWrapper);
+    nav.append(tools);
   }
 
   const navBrand = nav.querySelector('.nav-brand');
