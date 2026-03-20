@@ -57,29 +57,42 @@ export default async function decorate(block) {
   const iconsRow = document.createElement('div');
   iconsRow.className = 'footer-social-icons';
 
+  let copyrightText = '';
   const paras = [...cols[3].querySelectorAll('p')];
   paras.forEach((p) => {
     const img = p.querySelector('img');
     if (img) {
-      // social icon — wrap in a span
       const icon = document.createElement('span');
       icon.className = 'footer-social-icon';
       icon.append(p.querySelector('picture') ?? img);
       iconsRow.append(icon);
     } else {
-      // copyright text
-      const copy = document.createElement('p');
-      copy.className = 'footer-copyright';
-      copy.textContent = p.textContent;
-      socialCol.append(copy);
+      copyrightText = p.textContent;
     }
   });
 
-  socialCol.prepend(iconsRow);
+  socialCol.append(iconsRow);
+
+  // Desktop copyright — inside social column
+  if (copyrightText) {
+    const copyDesktop = document.createElement('p');
+    copyDesktop.className = 'footer-copyright footer-copyright-desktop';
+    copyDesktop.textContent = copyrightText;
+    socialCol.append(copyDesktop);
+  }
 
   // ── Assemble ──
   const bar = document.createElement('div');
   bar.className = 'footer-bar';
   bar.append(subscribeCol, linksCol, socialCol);
+
+  // Mobile copyright — direct bar child so it can be ordered after links
+  if (copyrightText) {
+    const copyMobile = document.createElement('p');
+    copyMobile.className = 'footer-copyright footer-copyright-mobile';
+    copyMobile.textContent = copyrightText;
+    bar.append(copyMobile);
+  }
+
   block.append(bar);
 }

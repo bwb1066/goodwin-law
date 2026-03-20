@@ -119,6 +119,12 @@
   transition: fill 0.2s ease;
 }
 
+@media (width < 900px) {
+  .hexagon {
+    display: none;
+  }
+}
+
 @media (width >= 900px) {
   .hexagon svg {
     width: 603px; /* was 460px */

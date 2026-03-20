@@ -460,6 +460,50 @@ main > .section .hero-layout {
   to { opacity: 1; }
 }
 
+@media (width < 900px) {
+  main > .section .hero-layout {
+    grid-template-columns: 1fr;
+    padding: 20px 0 32px;
+    gap: 32px;
+  }
+
+  .hero-card {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    margin-left: 0;
+    padding: 32px 24px;
+    border-radius: 16px 0 16px;
+    animation: none;
+    transform: none;
+  }
+
+  .hero-card h1,
+  .hero-card h2,
+  .hero-card-inner h1,
+  .hero-card-inner h2 {
+    font-size: 30px;
+    line-height: 38px;
+  }
+
+  .hero-card p {
+    font-size: 15px;
+    line-height: 24px;
+    margin-bottom: 24px;
+  }
+
+  .hero-card-inner {
+    clip-path: none;
+    animation: none;
+  }
+
+  .hero-right {
+    opacity: 1;
+    animation: none;
+    padding: 0 24px;
+  }
+}
+
 /* sections */
 main > .section {
   margin: 40px 0;
