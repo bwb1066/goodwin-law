@@ -27,18 +27,36 @@ export default function decorate(block) {
         h3.replaceWith(titleLink);
       }
 
-      // Description: strip leading pipe character from CMS formatting
+      // Description: split on | — text before = always visible, text after = hover-only
       textCell.querySelectorAll('p').forEach((p) => {
-        p.textContent = p.textContent.replace(/^\|\s*/, '');
-        if (!p.textContent.trim()) p.remove();
-      });
+        // Flatten any links to plain text for the description
+        p.querySelectorAll('a').forEach((a) => {
+          const span = document.createElement('span');
+          span.textContent = a.textContent;
+          a.replaceWith(span);
+        });
 
-      // Wrap description links as plain text nodes to strip their href styling
-      const descLinks = textCell.querySelectorAll('p a');
-      descLinks.forEach((a) => {
-        const span = document.createElement('span');
-        span.textContent = a.textContent;
-        a.replaceWith(span);
+        const raw = p.textContent;
+        const pipeIdx = raw.indexOf('|');
+        if (pipeIdx === -1) return; // no pipe — leave as-is (always visible)
+
+        const before = raw.slice(0, pipeIdx).trim();
+        const after = raw.slice(pipeIdx + 1).trim();
+
+        p.textContent = '';
+        if (before) {
+          const preSpan = document.createElement('span');
+          preSpan.className = 'featured-highlights-desc-pre';
+          preSpan.textContent = before;
+          p.append(preSpan);
+        }
+        if (after) {
+          const postSpan = document.createElement('span');
+          postSpan.className = 'featured-highlights-desc-post';
+          postSpan.textContent = after;
+          p.append(postSpan);
+        }
+        if (!p.children.length) p.remove();
       });
 
       // Arrow button

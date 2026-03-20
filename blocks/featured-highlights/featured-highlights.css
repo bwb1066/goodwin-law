@@ -87,20 +87,30 @@
   color: #2d3539;
 }
 
-/* description — hidden by default, shown on hover */
+/* description paragraph */
 .featured-highlights .featured-highlights-text p {
   margin: 8px 0 0;
   font-size: 15px;
   font-weight: 300;
   line-height: 1.55;
   color: #444;
+}
+
+/* text before | — always visible */
+.featured-highlights .featured-highlights-desc-pre {
+  display: block;
+}
+
+/* text after | — hidden at rest, fades in on hover */
+.featured-highlights .featured-highlights-desc-post {
+  display: block;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
   transition: max-height 0.25s ease, opacity 0.25s ease;
 }
 
-.featured-highlights .featured-highlights-card:hover .featured-highlights-text p {
+.featured-highlights .featured-highlights-card:hover .featured-highlights-desc-post {
   max-height: 120px;
   opacity: 1;
 }
