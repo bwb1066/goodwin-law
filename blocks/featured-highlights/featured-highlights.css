@@ -15,7 +15,7 @@
   display: flex;
   align-items: stretch;
   border: 1.5px solid var(--link-color);
-  border-radius: 6px 0 20px;
+  border-radius: 20px 0;
   background: #fff;
   overflow: visible;
   cursor: pointer;
@@ -31,7 +31,7 @@
   width: calc(100% + 4px);
   height: calc(100% + 4px);
   background: #f7941d;
-  border-radius: 6px 0 20px;
+  border-radius: 20px 0;
   z-index: -1;
   opacity: 0;
   transform: translate(-4px, -4px);
@@ -50,9 +50,9 @@
 /* ── image ── */
 .featured-highlights .featured-highlights-image {
   flex-shrink: 0;
-  width: 200px;
+  width: 120px;
   overflow: hidden;
-  border-radius: 4px 0 0 18px;
+  border-radius: 20px 0 0;
 }
 
 .featured-highlights .featured-highlights-image img {
@@ -96,9 +96,10 @@
   color: #444;
 }
 
-/* text before | — always visible */
+/* text before | — always visible, bold */
 .featured-highlights .featured-highlights-desc-pre {
   display: block;
+  font-weight: 700;
 }
 
 /* text after | — hidden at rest, fades in on hover */
@@ -145,7 +146,7 @@
 
 @media (width >= 900px) {
   .featured-highlights .featured-highlights-image {
-    width: 240px;
+    width: 120px;
   }
 
   .featured-highlights .featured-highlights-title {
