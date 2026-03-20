@@ -352,6 +352,7 @@ function addVideoBackground() {
 
 async function loadEager(doc) {
   document.documentElement.lang = 'en';
+  document.title = 'Goodwin | Innovation & Capital | Global Law Firm';
   decorateTemplateAndTheme();
   addVideoBackground();
   const main = doc.querySelector('main');
