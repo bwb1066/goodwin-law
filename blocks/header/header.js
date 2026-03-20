@@ -486,4 +486,16 @@ export default async function decorate(block) {
   navWrapper.className = 'nav-wrapper';
   navWrapper.append(nav);
   block.append(navWrapper);
+
+  // Hide on scroll down, reveal on scroll up
+  let lastScrollY = window.scrollY;
+  window.addEventListener('scroll', () => {
+    const currentScrollY = window.scrollY;
+    if (currentScrollY <= 0 || currentScrollY < lastScrollY) {
+      navWrapper.classList.remove('nav-hidden');
+    } else if (currentScrollY > lastScrollY && currentScrollY > 80) {
+      navWrapper.classList.add('nav-hidden');
+    }
+    lastScrollY = currentScrollY;
+  }, { passive: true });
 }

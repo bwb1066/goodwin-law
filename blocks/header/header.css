@@ -1,10 +1,21 @@
 /* ── wrapper ── */
+header {
+  height: var(--nav-height);
+}
+
 header .nav-wrapper {
   background-color: var(--background-color);
   box-shadow: 0 5px 15px rgb(0 0 0 / 25%);
   width: 100%;
   z-index: 100;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  transition: transform 0.3s ease;
+}
+
+header .nav-wrapper.nav-hidden {
+  transform: translateY(-100%);
 }
 
 /* ── nav grid (mobile) ── */
@@ -35,10 +46,6 @@ header nav[aria-expanded='true'] {
 
 /* ── nav flex (desktop) ── */
 @media (width >= 900px) {
-  header .nav-wrapper {
-    position: relative;
-  }
-
   header nav {
     display: flex;
     flex-direction: row;
@@ -544,10 +551,6 @@ header nav.nav-search-open .nav-search-dismiss {
 }
 
 /* ── nav search panel ── */
-header .nav-wrapper {
-  position: relative;
-}
-
 header .nav-search-panel {
   position: absolute;
   top: 100%;
