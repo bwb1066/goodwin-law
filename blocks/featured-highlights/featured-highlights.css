@@ -51,7 +51,7 @@
 /* ── image ── */
 .featured-highlights .featured-highlights-image {
   flex-shrink: 0;
-  width: 120px;
+  width: 115px;
   overflow: hidden;
   border-radius: 20px 0 0;
 }
@@ -147,7 +147,7 @@
 
 @media (width >= 900px) {
   .featured-highlights .featured-highlights-image {
-    width: 120px;
+    width: 115px;
   }
 
   .featured-highlights .featured-highlights-title {
