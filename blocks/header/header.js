@@ -205,24 +205,72 @@ export default async function decorate(block) {
   const tmp = document.createElement('div');
   tmp.innerHTML = await resp.text();
 
+  // Normalize any localhost URLs left over from local-file authoring
+  tmp.querySelectorAll('[href],[src]').forEach((el) => {
+    ['href', 'src'].forEach((attr) => {
+      const val = el.getAttribute(attr);
+      if (val && val.startsWith('http://localhost')) {
+        el.setAttribute(attr, val.replace(/^http:\/\/localhost(:\d+)?/, ''));
+      }
+    });
+  });
+
   // decorate nav DOM
   block.textContent = '';
   const nav = document.createElement('nav');
   nav.id = 'nav';
 
-  // Map authored divs to nav areas by position: brand / sections / secondary / tools
-  // Accept any number of divs (1-4); inject a tools section if not authored
-  const classes = ['brand', 'sections', 'secondary', 'tools'];
-  [...tmp.children].forEach((rawSection, i) => {
-    if (!classes[i]) return;
-    const section = document.createElement('div');
-    section.classList.add(`nav-${classes[i]}`);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'default-content-wrapper';
-    while (rawSection.firstChild) wrapper.append(rawSection.firstChild);
-    section.append(wrapper);
-    nav.append(section);
-  });
+  if (tmp.children.length >= 2) {
+    // Multi-section structure: map divs by position → brand / sections / secondary / tools
+    const classes = ['brand', 'sections', 'secondary', 'tools'];
+    [...tmp.children].forEach((rawSection, i) => {
+      if (!classes[i]) return;
+      const section = document.createElement('div');
+      section.classList.add(`nav-${classes[i]}`);
+      const wrapper = document.createElement('div');
+      wrapper.className = 'default-content-wrapper';
+      while (rawSection.firstChild) wrapper.append(rawSection.firstChild);
+      section.append(wrapper);
+      nav.append(section);
+    });
+  } else {
+    // Flat structure: single div with brand image + all nav items in one UL
+    const rawDiv = tmp.children[0];
+    if (!rawDiv) return;
+
+    // Brand — first paragraph containing an image
+    const brandPara = rawDiv.querySelector('p:first-child');
+    if (brandPara && brandPara.querySelector('img, picture')) {
+      const brand = document.createElement('div');
+      brand.className = 'nav-brand';
+      const brandWrapper = document.createElement('div');
+      brandWrapper.className = 'default-content-wrapper';
+      brandWrapper.append(brandPara);
+      brand.append(brandWrapper);
+      nav.append(brand);
+    }
+
+    // Nav ULs — first → nav-sections (primary), second → nav-secondary
+    const uls = [...rawDiv.querySelectorAll(':scope > ul')];
+    const areaNames = ['nav-sections', 'nav-secondary'];
+    uls.forEach((ul, i) => {
+      if (!areaNames[i]) return;
+      ul.querySelectorAll(':scope > li').forEach((li) => {
+        const nested = li.querySelector(':scope > p > strong > a, :scope > p > a');
+        if (nested) {
+          li.insertBefore(nested, li.firstChild);
+          li.querySelector(':scope > p')?.remove();
+        }
+      });
+      const area = document.createElement('div');
+      area.className = areaNames[i];
+      const areaWrapper = document.createElement('div');
+      areaWrapper.className = 'default-content-wrapper';
+      areaWrapper.append(ul);
+      area.append(areaWrapper);
+      nav.append(area);
+    });
+  }
 
   // If no tools section was authored, inject one with a search icon
   if (!nav.querySelector('.nav-tools')) {
