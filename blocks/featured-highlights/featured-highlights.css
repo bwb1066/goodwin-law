@@ -19,6 +19,7 @@
   background: #fff;
   overflow: visible;
   cursor: pointer;
+  min-height: 100px;
   margin-bottom: 16px;
   transition: border-color 0.2s ease;
 }
