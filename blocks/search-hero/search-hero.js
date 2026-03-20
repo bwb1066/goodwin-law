@@ -32,6 +32,9 @@ export default function decorate(block) {
     url: row.children[1]?.textContent?.trim(),
   })).filter((s) => s.label);
 
+  // Expose authored suggestions for other blocks (e.g. nav search panel)
+  block.dataset.suggestions = JSON.stringify(authored);
+
   block.innerHTML = '';
 
   // ── Input row ──
@@ -105,14 +108,25 @@ export default function decorate(block) {
   // ── Filter on type ──
   input.addEventListener('input', () => renderPanel(input.value));
 
+  // ── Attach panel to body so it escapes any stacking-context / overflow trap ──
+  document.body.append(panel);
+
+  function positionPanel() {
+    const rect = inputWrapper.getBoundingClientRect();
+    panel.style.top = `${rect.bottom + window.scrollY}px`;
+    panel.style.left = `${rect.left + window.scrollX}px`;
+    panel.style.width = `${rect.width}px`;
+  }
+
   // ── Show/hide ──
   input.addEventListener('focus', () => {
     renderPanel(input.value);
+    positionPanel();
     panel.hidden = false;
   });
   input.addEventListener('blur', () => {
     setTimeout(() => { panel.hidden = true; }, 150);
   });
 
-  block.append(inputWrapper, panel);
+  block.append(inputWrapper);
 }

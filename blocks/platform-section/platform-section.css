@@ -1,12 +1,25 @@
 .platform-section {
-  background-color: #1a2b33;
-  color: #fff;
-  padding: 60px 24px;
+  position: relative;
+  padding: 30px 0;
+}
+
+/* Full-bleed gradient background — 100vw wide, centered from the element midpoint */
+.platform-section::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 55em; /* was 43.75em */
+  background-image: linear-gradient(180deg, hsl(0 0% 100% / 0), #fff 39%, #fff 63%, hsl(0 0% 100% / 0));
 }
 
 .platform-section > div {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 24px;
   display: flex;
   flex-direction: column;
   gap: 40px;
@@ -14,69 +27,8 @@
 }
 
 /* ── text column ── */
-.platform-section .platform-section-text h2 {
-  margin-top: 0;
-  margin-bottom: 24px;
-  font-size: 36px;
-  font-weight: 300;
-  line-height: 1.2;
-  color: #fff;
-}
-
-.platform-section .platform-section-text h2 strong {
-  font-weight: 300;
-}
-
-.platform-section .platform-section-text ul {
-  list-style: none;
-  padding: 0;
-  margin: 0 0 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-
-.platform-section .platform-section-text ul li {
-  padding: 10px 0;
-  font-size: 16px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #94cce7;
-  border-bottom: 1px solid rgb(255 255 255 / 12%);
-}
-
-.platform-section .platform-section-text ul li:first-child {
-  border-top: 1px solid rgb(255 255 255 / 12%);
-}
-
-.platform-section .platform-section-text p {
-  margin: 0 0 24px;
-  font-size: 16px;
-  font-weight: 300;
-  line-height: 1.7;
-  color: rgb(255 255 255 / 80%);
-}
-
-.platform-section .platform-section-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: #f7941d;
-  text-decoration: none;
-  border-bottom: 1px solid #f7941d;
-  padding-bottom: 2px;
-  transition: color 0.15s ease, border-color 0.15s ease;
-}
-
-.platform-section .platform-section-link:hover {
-  color: #e07d0a;
-  border-color: #e07d0a;
-  text-decoration: none;
+.platform-section .platform-section-text {
+  width: 100%;
 }
 
 /* ── visual column ── */
@@ -88,25 +40,27 @@
 
 @media (width >= 900px) {
   .platform-section {
-    padding: 80px 32px;
+    padding: 10px 32px 40px; /* was 40px — tighter top to sit near previous section */
   }
 
   .platform-section > div {
     flex-direction: row;
-    align-items: center;
-    gap: 80px;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0;
+    max-width: 1440px;
+    padding: 0 48px 0 24px;
   }
 
   .platform-section .platform-section-text {
-    flex: 1 1 auto;
-    max-width: 520px;
+    flex: 0 0 auto;
+    max-width: 420px; /* was 520px */
+    margin-right: auto;
+    transform: translate(-116px, 78px);
   }
 
   .platform-section .platform-section-visual {
     flex-shrink: 0;
-  }
-
-  .platform-section .platform-section-text h2 {
-    font-size: 44px;
+    margin-right: -145px;
   }
 }

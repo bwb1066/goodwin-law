@@ -9,7 +9,9 @@ export default function decorate(block) {
   if (left) left.classList.add('platform-section-text');
   if (right) right.classList.add('platform-section-visual');
 
-  // Style the "Explore" link as a button
-  const link = left && left.querySelector('a');
-  if (link) link.classList.add('platform-section-link');
+  // Hide the static h2 when platform-cards is present — the card content replaces it
+  if (left && left.querySelector('.platform-cards')) {
+    const h2 = left.querySelector(':scope > h2');
+    if (h2) h2.hidden = true;
+  }
 }

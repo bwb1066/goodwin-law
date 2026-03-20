@@ -332,6 +332,17 @@ main img {
   width: 100%;
 }
 
+/* ececec multiply veil over video — matches source site technique */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(to bottom, #ececec 0%, rgb(236 236 236 / 50%) 100%);
+  mix-blend-mode: multiply;
+  z-index: -1;
+  pointer-events: none;
+}
+
 /* full-screen video background */
 #page-video-bg {
   position: fixed;
@@ -359,8 +370,8 @@ main img {
 /* needs higher specificity than `main > .section > div` (0,1,2) */
 main > .section .hero-layout {
   display: grid;
-  grid-template-columns: 915px 430px;
-  gap: 65px;
+  grid-template-columns: 915px 473px;
+  gap: 22px;
   max-width: 1410px;
   margin: 0 auto;
   padding: 80px 0 64px;
@@ -372,7 +383,7 @@ main > .section .hero-layout {
   width: 915px;
   height: 465px;
   background: #fff;
-  padding: 64px 80px 64px 90px;
+  padding: 47px 80px 47px 90px;
   margin-left: -55px;
   border-radius: 20px 0 40px;
   transform: translateX(-25vw);
@@ -385,9 +396,17 @@ main > .section .hero-layout {
   margin-top: 0;
   margin-bottom: 0;
   font-weight: 300;
-  font-size: 50px;
-  line-height: 1.15;
+  font-size: 45px;
+  line-height: 54px;
   color: #2d3539;
+}
+
+/* Ensure hero heading overrides global h heading sizes */
+.hero-card-inner h1,
+.hero-card-inner h2 {
+  font-size: 45px;
+  line-height: 54px;
+  font-weight: 300;
 }
 
 .hero-orange-rule {
@@ -403,7 +422,7 @@ main > .section .hero-layout {
   margin-bottom: 32px;
   font-weight: 300;
   font-size: 17px;
-  line-height: 1.6;
+  line-height: 27px;
   color: #2d3539;
 }
 
@@ -419,6 +438,7 @@ main > .section .hero-layout {
 
 .hero-right h2 {
   margin-top: 0;
+  margin-bottom: 20px;
   font-weight: 400;
   font-size: 24px;
   line-height: 29px;

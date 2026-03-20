@@ -72,12 +72,14 @@
   height: 18px;
 }
 
-/* ── suggestions panel ── */
+/* ── suggestions panel — appended to body, positioned via JS ── */
 .search-hero-suggestions {
+  position: absolute;
+  z-index: 9999;
   margin: 0;
   padding: 1.5em 0;
   background: #fff;
-  box-shadow: 0 0 20px rgb(247 148 29 / 30%);
+  box-shadow: 0 8px 32px rgb(247 148 29 / 40%);
   border-radius: 0;
 }
 
@@ -98,13 +100,8 @@
 }
 
 .search-hero-suggestion {
-  border-bottom: 1px solid #ececec;
   padding: 0;
   margin: 0;
-}
-
-.search-hero-suggestion:last-child {
-  border-bottom: none;
 }
 
 .search-hero-suggestion a:any-link {

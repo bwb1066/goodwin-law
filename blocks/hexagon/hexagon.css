@@ -4,26 +4,123 @@
   align-items: center;
 }
 
-.hexagon .hexagon-image-wrapper,
-.hexagon p {
-  margin: 0;
-  width: 320px;
-  height: 320px;
-  clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  overflow: hidden;
+/* SVG starts hidden — scroll-in animation reveals it */
+.hexagon svg {
+  width: 420px; /* was 320px */
+  height: auto;
+  overflow: visible;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }
 
-.hexagon img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
+/* ── ring paths — invisible hit areas only (no fill, no stroke) ── */
+.hexagon .hex-ring {
+  fill: transparent;
+  stroke: none;
+}
+
+/* ── gradient fill overlays — hidden by default ── */
+.hexagon .hex-fade {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* ── text labels — hidden until animation completes ── */
+.hexagon .hex-label {
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.hexagon .hex-label text {
+  fill: #2d3539;
+  font-size: 18px;
+  font-weight: 400;
+  transition: fill 0.2s ease;
+}
+
+.hexagon .hex-label:first-child text {
+  fill: #2d3539;
+  font-weight: 600;
+}
+
+.hexagon .hex-label-active text {
+  fill: #f7941d;
+  font-weight: 700;
+}
+
+/* ─────────────────────────────────────────
+   BUILD PHASE  (.hex-build on <svg>)
+   Border segments draw in clockwise
+───────────────────────────────────────── */
+.hexagon svg.hex-build {
+  opacity: 1;
+}
+
+.hexagon svg.hex-build .hex-fade[data-order="0"] {
+  opacity: 0.85;
+  transition: opacity 0.45s ease 0.05s;
+}
+
+.hexagon svg.hex-build .hex-fade[data-order="1"] {
+  opacity: 0.85;
+  transition: opacity 0.45s ease 0.3s;
+}
+
+.hexagon svg.hex-build .hex-fade[data-order="2"] {
+  opacity: 0.85;
+  transition: opacity 0.45s ease 0.55s;
+}
+
+.hexagon svg.hex-build .hex-fade[data-order="3"] {
+  opacity: 0.85;
+  transition: opacity 0.45s ease 0.8s;
+}
+
+.hexagon svg.hex-build .hex-fade[data-order="4"] {
+  opacity: 0.85;
+  transition: opacity 0.45s ease 1.05s;
+}
+
+.hexagon svg.hex-build .hex-fade[data-order="5"] {
+  opacity: 0.85;
+  transition: opacity 0.45s ease 1.3s;
+}
+
+.hexagon svg.hex-build .hex-label {
+  opacity: 1;
+  transition: opacity 0.5s ease 1.6s;
+}
+
+/* ─────────────────────────────────────────
+   READY PHASE  (.hex-ready on <svg>)
+───────────────────────────────────────── */
+.hexagon svg.hex-ready {
+  opacity: 1;
+}
+
+.hexagon svg.hex-ready .hex-label {
+  opacity: 1;
+}
+
+/* Default: all gradient segments visible */
+.hexagon svg.hex-ready .hex-fade {
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+/* On industry hover: all gradient segments fade out */
+.hexagon svg.hex-ready.hex-industry-active .hex-fade {
+  opacity: 0;
+}
+
+/* Active ring fills solid orange */
+.hexagon svg.hex-ready .hex-ring-active {
+  fill: #f7941d;
+  transition: fill 0.2s ease;
 }
 
 @media (width >= 900px) {
-  .hexagon .hexagon-image-wrapper,
-  .hexagon p {
-    width: 420px;
-    height: 420px;
+  .hexagon svg {
+    width: 603px; /* was 460px */
   }
 }

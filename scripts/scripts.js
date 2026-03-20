@@ -325,6 +325,11 @@ export function decorateMain(main) {
   buildHeroLayout(main);
   reorderSections(main);
   decorateButtons(main);
+
+  // Convert and decorate block tables nested inside other blocks
+  // (decorateBlocks only processes div.section > div > div, not deeper nesting)
+  main.querySelectorAll('.platform-section').forEach(convertBlockTables);
+  main.querySelectorAll('.platform-section .hexagon, .platform-section .platform-cards').forEach(decorateBlock);
 }
 
 /**

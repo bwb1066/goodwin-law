@@ -3,6 +3,85 @@ import { getMetadata } from '../../scripts/aem.js';
 // media query match that indicates mobile/tablet width
 const isDesktop = window.matchMedia('(min-width: 900px)');
 
+const SEARCH_STORAGE_KEY = 'search-hero-recent';
+const MAX_RECENT = 5;
+
+const CLOCK_SVG = '<svg class="nav-search-sugg-icon" fill="none" stroke="currentColor" stroke-linejoin="round" stroke-linecap="round" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><circle cx="8" cy="8" r="7.5"></circle><path d="m8.5 4.5v4"></path><path d="m10.3066 10.1387-1.80932-1.5768"></path></svg>';
+const SEARCH_ICON_SVG = '<svg class="nav-search-sugg-icon" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="m6.4 0c3.5 0 6.4 2.9 6.4 6.4 0 1.4-.4 2.7-1.2 3.7l4 4c.4.4.4 1 .1 1.5l-.1.1c-.2.2-.5.3-.8.3s-.6-.1-.8-.3l-4-4c-1 .7-2.3 1.2-3.7 1.2-3.4-.1-6.3-3-6.3-6.5s2.9-6.4 6.4-6.4zm0 2.1c-2.3 0-4.3 1.9-4.3 4.3s1.9 4.3 4.3 4.3 4.3-1.9 4.3-4.3-1.9-4.3-4.3-4.3z"></path></svg>';
+
+function getRecentSearches() {
+  try { return JSON.parse(localStorage.getItem(SEARCH_STORAGE_KEY) || '[]'); } catch { return []; }
+}
+
+function getAuthoredSuggestions() {
+  const hero = document.querySelector('[data-block-name="search-hero"]');
+  if (!hero || !hero.dataset.suggestions) return [];
+  try { return JSON.parse(hero.dataset.suggestions); } catch { return []; }
+}
+
+function makePanelSuggItem(icon, label, url) {
+  const li = document.createElement('li');
+  li.className = 'nav-search-suggestion';
+  const a = document.createElement('a');
+  a.href = url || '#';
+  a.innerHTML = `${icon}<span>${label}</span>`;
+  li.append(a);
+  return li;
+}
+
+function buildSearchPanel() {
+  const panel = document.createElement('div');
+  panel.className = 'nav-search-panel';
+  panel.hidden = true;
+
+  const inner = document.createElement('div');
+  inner.className = 'nav-search-panel-inner';
+
+  function renderSuggestions(q = '') {
+    inner.innerHTML = '';
+    const filter = q.toLowerCase();
+    const recent = getRecentSearches();
+    const authored = getAuthoredSuggestions();
+
+    if (recent.length && !filter) {
+      const hdr = document.createElement('div');
+      hdr.className = 'nav-search-recent-header';
+      const title = document.createElement('p');
+      title.textContent = 'Recent searches';
+      const clearBtn = document.createElement('button');
+      clearBtn.type = 'button';
+      clearBtn.className = 'nav-search-clear';
+      clearBtn.textContent = 'Clear';
+      clearBtn.addEventListener('click', () => {
+        try { localStorage.removeItem(SEARCH_STORAGE_KEY); } catch { /* ignore */ }
+        renderSuggestions(q);
+      });
+      hdr.append(title, clearBtn);
+      inner.append(hdr);
+
+      const ul = document.createElement('ul');
+      recent.forEach((term) => {
+        ul.append(makePanelSuggItem(CLOCK_SVG, term, `/en/search?q=${encodeURIComponent(term)}`));
+      });
+      inner.append(ul);
+    }
+
+    const filtered = filter
+      ? authored.filter((s) => s.label.toLowerCase().includes(filter))
+      : authored;
+
+    if (filtered.length) {
+      const ul = document.createElement('ul');
+      filtered.forEach(({ label, url }) => ul.append(makePanelSuggItem(SEARCH_ICON_SVG, label, url)));
+      inner.append(ul);
+    }
+  }
+
+  panel.renderSuggestions = renderSuggestions;
+  panel.append(inner);
+  return panel;
+}
+
 function closeOnEscape(e) {
   if (e.code === 'Escape') {
     const nav = document.getElementById('nav');
@@ -226,7 +305,7 @@ export default async function decorate(block) {
     });
   }
 
-  // inline search SVG for CSS fill control
+  // inline search SVG for CSS fill control + search panel
   const navTools = nav.querySelector('.nav-tools');
   if (navTools) {
     const iconImg = navTools.querySelector('.icon-search img');
@@ -243,6 +322,117 @@ export default async function decorate(block) {
             span.replaceChildren(svg);
           }
         });
+    }
+
+    // Build search panel and attach to navWrapper (set after this block runs)
+    const searchPanel = buildSearchPanel();
+    Promise.resolve().then(() => {
+      const wrapper = block.querySelector('.nav-wrapper');
+      if (wrapper) wrapper.append(searchPanel);
+    });
+
+    // Build inline nav search bar (hidden until icon clicked)
+    const searchBar = document.createElement('div');
+    searchBar.className = 'nav-search-bar';
+    searchBar.hidden = true;
+    const searchBarInput = document.createElement('input');
+    searchBarInput.type = 'text';
+    searchBarInput.placeholder = 'Search by industry, practice, or name…';
+    searchBarInput.className = 'nav-search-bar-input';
+    searchBarInput.setAttribute('autocomplete', 'off');
+    searchBarInput.setAttribute('aria-label', 'Search');
+    const searchBarSubmit = document.createElement('button');
+    searchBarSubmit.type = 'button';
+    searchBarSubmit.className = 'nav-search-bar-submit';
+    searchBarSubmit.setAttribute('aria-label', 'Submit search');
+    searchBarSubmit.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.273 3.09a8.182 8.182 0 1 0 0 16.364 8.182 8.182 0 0 0 0-16.363Zm-7.328.855a10.364 10.364 0 0 1 15.39 13.84l4.164 4.172-1.544 1.541-4.162-4.17A10.364 10.364 0 0 1 3.945 3.945Z" fill="currentColor"/></svg>';
+    searchBar.append(searchBarInput, searchBarSubmit);
+    navTools.before(searchBar);
+
+    // X dismiss button — sits in navTools, visible only when search is open
+    const dismissBtn = document.createElement('button');
+    dismissBtn.type = 'button';
+    dismissBtn.className = 'nav-search-dismiss';
+    dismissBtn.setAttribute('aria-label', 'Close search');
+    dismissBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
+    navTools.append(dismissBtn);
+
+    const iconSpan = navTools.querySelector('.icon-search');
+    if (iconSpan) {
+      iconSpan.setAttribute('role', 'button');
+      iconSpan.setAttribute('tabindex', '0');
+      iconSpan.setAttribute('aria-label', 'Search');
+
+      function closeSearchPanel() {
+        searchPanel.hidden = true;
+        searchBar.hidden = true;
+        nav.classList.remove('nav-search-open');
+        // eslint-disable-next-line no-use-before-define
+        document.removeEventListener('click', onOutsideClick);
+        // eslint-disable-next-line no-use-before-define
+        document.removeEventListener('keydown', onEscClose);
+      }
+
+      dismissBtn.addEventListener('click', closeSearchPanel);
+
+      function onOutsideClick(e) {
+        const inside = searchPanel.contains(e.target)
+          || searchBar.contains(e.target)
+          || iconSpan.contains(e.target)
+          || dismissBtn.contains(e.target);
+        if (!inside) closeSearchPanel();
+      }
+
+      function onEscClose(e) {
+        if (e.key === 'Escape') closeSearchPanel();
+      }
+
+      searchBarSubmit.addEventListener('click', () => {
+        const q = searchBarInput.value.trim();
+        if (q) {
+          try {
+            const list = [q, ...getRecentSearches().filter((s) => s !== q)].slice(0, MAX_RECENT);
+            localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(list));
+          } catch { /* ignore */ }
+          window.location.href = `/en/search?q=${encodeURIComponent(q)}`;
+        }
+      });
+
+      searchBarInput.addEventListener('input', () => {
+        searchPanel.renderSuggestions(searchBarInput.value);
+      });
+
+      searchBarInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const q = searchBarInput.value.trim();
+          if (q) {
+            try {
+              const list = [q, ...getRecentSearches().filter((s) => s !== q)].slice(0, MAX_RECENT);
+              localStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(list));
+            } catch { /* ignore */ }
+            window.location.href = `/en/search?q=${encodeURIComponent(q)}`;
+          }
+        }
+      });
+
+      iconSpan.addEventListener('click', () => {
+        const isOpen = !searchPanel.hidden;
+        if (isOpen) {
+          closeSearchPanel();
+        } else {
+          nav.classList.add('nav-search-open');
+          searchBar.hidden = false;
+          searchBarInput.value = '';
+          searchPanel.renderSuggestions();
+          searchPanel.hidden = false;
+          searchBarInput.focus();
+          setTimeout(() => {
+            document.addEventListener('click', onOutsideClick);
+            document.addEventListener('keydown', onEscClose);
+          }, 0);
+        }
+      });
+
     }
   }
 

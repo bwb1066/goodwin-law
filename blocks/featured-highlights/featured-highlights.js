@@ -1,6 +1,13 @@
 export default function decorate(block) {
   // Find the section heading (h2 sibling before this block)
   const section = block.closest('.section');
+
+  // Style any standalone link in this section (outside the block) as a theme CTA
+  if (section) {
+    [...section.querySelectorAll('p > a')].forEach((a) => {
+      if (!block.contains(a)) a.classList.add('featured-highlights-view-all');
+    });
+  }
   const heading = section && section.querySelector('h2');
 
   if (heading) {

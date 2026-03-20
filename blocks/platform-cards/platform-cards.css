@@ -1,0 +1,118 @@
+.platform-cards {
+  width: 100%;
+}
+
+/* ── always-visible platform card ── */
+.platform-cards .platform-card-platform .platform-card-content p:first-child strong {
+  display: block;
+  font-size: 24px;
+  line-height: 29px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #2d3539;
+  margin-bottom: 0;
+}
+
+.platform-cards .platform-card-platform .platform-card-content p {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: #2d3539;
+}
+
+.platform-cards .platform-card-platform .platform-card-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── dynamic industry cards ── */
+.platform-cards .platform-card-dynamic {
+  margin-top: 8px;
+}
+
+.platform-cards .platform-card {
+  display: none;
+  flex-direction: column;
+  gap: 0;
+  animation: platform-card-in 0.25s ease;
+}
+
+.platform-cards .platform-card-active {
+  display: flex;
+}
+
+/* ── always-visible platform card (must come after .platform-card { display: none }) ── */
+.platform-cards .platform-card-platform {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@keyframes platform-card-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── industry heading (first p > strong) ── */
+.platform-cards .platform-card-content p:first-child strong {
+  display: block;
+  font-size: 24px;
+  line-height: 29px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #2d3539;
+}
+
+.platform-cards .platform-card-content p:first-child {
+  margin: 0;
+}
+
+/* ── orange rule (injected between heading and body) ── */
+.platform-cards .platform-card-divider {
+  width: 48px;
+  height: 3px;
+  background: #f7941d;
+  margin: 16px 0;
+}
+
+/* ── body copy ── */
+.platform-cards .platform-card-content p {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.7;
+  color: #555;
+}
+
+.platform-cards .platform-card-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── CTA wrapper ── */
+.platform-cards .platform-card-cta-wrapper {
+  margin-top: 20px;
+}
+
+/* ── CTA link ── */
+.platform-cards .platform-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #2d3539;
+  text-decoration: none;
+  border-bottom: 1.5px solid #2d3539;
+  padding-bottom: 2px;
+  transition: color 0.15s ease, border-bottom-color 0.15s ease;
+}
+
+.platform-cards .platform-card-cta:hover {
+  color: #f7941d;
+  border-bottom-color: #f7941d;
+}
+
