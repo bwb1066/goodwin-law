@@ -54,13 +54,19 @@
   width: 115px;
   overflow: hidden;
   border-radius: 20px 0 0;
+  display: flex;
+}
+
+.featured-highlights .featured-highlights-image picture {
+  flex: 1;
+  display: flex;
 }
 
 .featured-highlights .featured-highlights-image img {
   width: 100%;
-  height: 100%;
   object-fit: cover;
   display: block;
+  flex: 1;
 }
 
 /* ── text ── */
