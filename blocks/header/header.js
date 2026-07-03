@@ -72,7 +72,9 @@ function buildSearchPanel() {
 
     if (filtered.length) {
       const ul = document.createElement('ul');
-      filtered.forEach(({ label, url }) => ul.append(makePanelSuggItem(SEARCH_ICON_SVG, label, url)));
+      filtered.forEach(({ label, url }) => {
+        ul.append(makePanelSuggItem(SEARCH_ICON_SVG, label, url));
+      });
       inner.append(ul);
     }
   }
@@ -394,7 +396,7 @@ export default async function decorate(block) {
       iconSpan.setAttribute('tabindex', '0');
       iconSpan.setAttribute('aria-label', 'Search');
 
-      function closeSearchPanel() {
+      const closeSearchPanel = () => {
         searchPanel.hidden = true;
         searchBar.hidden = true;
         nav.classList.remove('nav-search-open');
@@ -402,21 +404,21 @@ export default async function decorate(block) {
         document.removeEventListener('click', onOutsideClick);
         // eslint-disable-next-line no-use-before-define
         document.removeEventListener('keydown', onEscClose);
-      }
+      };
 
       dismissBtn.addEventListener('click', closeSearchPanel);
 
-      function onOutsideClick(e) {
+      const onOutsideClick = (e) => {
         const inside = searchPanel.contains(e.target)
           || searchBar.contains(e.target)
           || iconSpan.contains(e.target)
           || dismissBtn.contains(e.target);
         if (!inside) closeSearchPanel();
-      }
+      };
 
-      function onEscClose(e) {
+      const onEscClose = (e) => {
         if (e.key === 'Escape') closeSearchPanel();
-      }
+      };
 
       searchBarSubmit.addEventListener('click', () => {
         const q = searchBarInput.value.trim();
@@ -463,7 +465,6 @@ export default async function decorate(block) {
           }, 0);
         }
       });
-
     }
   }
 

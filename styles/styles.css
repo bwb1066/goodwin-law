@@ -473,7 +473,7 @@ main > .section .hero-layout {
     min-height: 0;
     margin-left: 0;
     padding: 32px 24px;
-    border-radius: 16px 0 16px;
+    border-radius: 16px 0;
     animation: none;
     transform: none;
   }

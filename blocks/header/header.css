@@ -569,6 +569,7 @@ header nav.nav-search-open .nav-search-bar {
   align-items: center;
   gap: 12px;
   min-width: 0;
+
   /* Align placeholder text with the panel's inner left edge.
      Panel is 1200px wide centered; nav content starts 32px in.
      At ≥1400px viewport the offset is fixed at 108px. Below that, clamp to 40px. */

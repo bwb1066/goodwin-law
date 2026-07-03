@@ -37,10 +37,7 @@ footer .footer-subscribe-btn {
   display: inline-block;
   padding: 1em 2.25em;
   border: 1px solid #f7941d;
-  border-top-left-radius: 15px;
-  border-bottom-right-radius: 15px;
-  border-top-right-radius: 0;
-  border-bottom-left-radius: 0;
+  border-radius: 15px 0;
   background: #fff;
   font-family: var(--body-font-family);
   font-size: 15px;
@@ -141,7 +138,6 @@ footer .footer-copyright-mobile {
 @media (width < 900px) {
   footer .footer-subscribe { order: 1; }
   footer .footer-social { order: 2; }
-  footer .footer-links { order: 3; }
   footer .footer-copyright { order: 4; }
 
   footer .footer-subscribe-btn {
@@ -156,6 +152,7 @@ footer .footer-copyright-mobile {
   }
 
   footer .footer-links {
+    order: 3;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 0;
