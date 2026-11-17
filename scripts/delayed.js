@@ -27,3 +27,5 @@ async function loadConcierge() {
 }
 
 loadConcierge();
+
+import('./utils/beacon.js').then(({ default: beacon }) => beacon());
